@@ -11,9 +11,7 @@
 
 <script setup lang="ts">
 import type { Task } from '@/types/task';
-interface Props extends Pick<Task, 'title' | 'description'{
-    
-}
+interface Props extends Pick<Task, 'title' | 'description'>{}
 const props = defineProps<Props>();
 </script>
 

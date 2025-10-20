@@ -1,17 +1,33 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
-import type { ListFormat } from 'typescript'
-import type { Task } from '../types/task.ts'
+// stores/taskStore.ts
+import { defineStore } from 'pinia';
+import type { Task } from '../types/task';
 
-export const useTaskStore = defineStore('taskStore', () => {
-  state: ()=>{
-    const tasks: Array<Task> = [];
-
-  }
-  actions:{
-    addTask(task: Task){
-        this.tasks.push(task);
+export const useTaskStore = defineStore('taskStore', {
+  state: () => {
+    // Загружаем задачи из localStorage при инициализации
+    const storedTasks = localStorage.getItem('tasks');
+    const tasks: Task[] = storedTasks ? JSON.parse(storedTasks) : [];
+    return {
+      tasks
+    };
+  },
+  actions: {
+    // Функция добавления задачи
+    addTask(task: Task) {
+      this.tasks.push(task);
+      // Сохраняем в localStorage после добавления
+      this.saveTasks();
+    },
+    // Функция сохранения задач в localStorage
+    saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
+    // Опционально: функция загрузки задач (если нужно перезагрузить вручную)
+    loadTasks() {
+      const storedTasks = localStorage.getItem('tasks');
+      if (storedTasks) {
+        this.tasks = JSON.parse(storedTasks);
+      }
     }
   }
-
-})
+});
