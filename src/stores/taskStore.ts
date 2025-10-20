@@ -32,6 +32,13 @@ export const useTaskStore = defineStore('taskStore', {
     },
     removeTask (id: string){
       this.tasks = this.tasks.filter(task => task.id !== id);
+    },
+    updateTask(id: string, updatedTask: Omit<Task, 'id'>) {
+      const index = this.tasks.findIndex(task => task.id === id);
+      if (index !== -1) {
+        this.tasks[index] = { ...this.tasks[index], ...updatedTask } as Task;
+        this.saveTasks();
+      }
     }
   }
 });

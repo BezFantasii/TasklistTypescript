@@ -1,19 +1,24 @@
 <template>
   <div class="task__card">
-    <div class="title__field">
+    <div v-if="!isEditing" class="title__field">
         {{ props.title }}
     </div>
-    <div class="data__field">
+    <MyInput v-else v-model="editTitle" :dataType="'text'" :placeholder="'Название задачи'" />
+    <div v-if="!isEditing" class="data__field">
         {{ props.description }}
     </div>
-    <button class="delete-btn" @click="deleteTask" title="Удалить задачу">×</button>
+    <MyInput v-else v-model="editDescription" :dataType="'text'" :placeholder="'Описание задачи'"/>
+    <button class="delete__btn" @click="deleteTask" title="Удалить задачу">×</button>
+    <button v-if="!isEditing" class="edit__btn" @click="startEdit" title="Редактировать задачу">✎</button>
+    <button v-else class="save__btn" @click="saveEdit" title="Сохранить изменения">✓</button>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Task } from '@/types/task';
-import { onMounted } from 'vue';
-import { useTaskStore } from '@/stores/taskStore.ts';
+import { onMounted, ref } from 'vue';
+import { useTaskStore } from '@/stores/taskStore';
+import MyInput from './UI/MyInput.vue';
 
 interface Props extends Pick<Task, 'title' | 'description' | 'id'>{
 };
@@ -21,8 +26,23 @@ const props = defineProps<Props>();
 
 const taskStore = useTaskStore();
 
+const isEditing = ref(false);
+const editTitle = ref(props.title);
+const editDescription = ref(props.description);
+
 const deleteTask = () => {
-  taskStore.removeTask(props.id); // Предполагаю, что в store есть метод removeTask(id)
+  taskStore.removeTask(props.id);
+};
+
+const startEdit = () => {
+  isEditing.value = true;
+  editTitle.value = props.title;
+  editDescription.value = props.description;
+};
+
+const saveEdit = () => {
+  taskStore.updateTask(props.id, { title: editTitle.value, description: editDescription.value });
+  isEditing.value = false;
 };
 
 onMounted(() => console.log(props));
@@ -38,6 +58,8 @@ onMounted(() => console.log(props));
   margin-bottom: 1rem;
   font-family: 'Arial', sans-serif;
   transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .task__card:hover {
@@ -57,7 +79,7 @@ onMounted(() => console.log(props));
   line-height: 1.4;
 }
 
-.delete-btn {
+.delete__btn {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -76,12 +98,68 @@ onMounted(() => console.log(props));
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.delete-btn:hover {
+.delete__btn:hover {
   background-color: #d32f2f;
   transform: scale(1.1);
 }
 
-.delete-btn:active {
+.delete__btn:active {
+  transform: scale(0.95);
+}
+
+.edit__btn {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.edit__btn:hover {
+  background-color: #388e3c;
+  transform: scale(1.1);
+}
+
+.edit__btn:active {
+  transform: scale(0.95);
+}
+
+.save__btn {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.save__btn:hover {
+  background-color: #1976d2;
+  transform: scale(1.1);
+}
+
+.save__btn:active {
   transform: scale(0.95);
 }
 </style>

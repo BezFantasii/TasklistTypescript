@@ -1,10 +1,9 @@
 <template>
   <div class="task__form">
     <div class="input__form">
-        <input type="text" v-model="task.title" placeholder="Название задачи"/>
-        <input type="text" v-model="task.description" placeholder="Описание задачи"/>
-        <input type="text" v-model="task.id" placeholder="ID задачи"/>
-    </div>
+        <MyInput :model-value="task.title" @update:modelValue="$event => (task.title = $event)" :dataType="'text'" :placeholder="'Название задачи'"/>
+        <MyInput :model-value="task.description" @update:modelValue="$event => (task.description = $event)" :dataType="'text'" :placeholder="'Описание задачи'"/>
+     </div>
     <div class="submit__btn">
         <button @click="addTask">Поставить задачу</button>
     </div>
@@ -15,6 +14,7 @@
 import { ref } from 'vue';
 import type { Task } from '@/types/task';
 import { useTaskStore } from '@/stores/taskStore';
+import MyInput from './UI/MyInput.vue';
 
 const taskStore = useTaskStore();
 
@@ -25,13 +25,13 @@ const task = ref<Task>({
   id: ''
 });
 
-function addTask(): void {
+const  addTask = () => {
   // Проверяем, что все поля заполнены
-  if (!task.value.title || !task.value.description || !task.value.id) {
+  if (!task.value.title || !task.value.description) {
     alert('Пожалуйста, заполните все поля');
     return;
   }
-
+  task.value.id = Date.now().toString();
   // Добавляем задачу в store
   taskStore.addTask(task.value);
 
