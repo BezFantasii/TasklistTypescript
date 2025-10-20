@@ -28,6 +28,10 @@ export const useTaskStore = defineStore('taskStore', {
       if (storedTasks) {
         this.tasks = JSON.parse(storedTasks);
       }
+
+    },
+    removeTask (id: string){
+      this.tasks = this.tasks.filter(task => task.id !== id);
     }
   }
 });
