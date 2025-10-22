@@ -27,7 +27,7 @@ const tasks = computed(() => taskStore.tasks);
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   padding: 1rem;
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-family);
 }
 
 /* Для мобильных устройств */

@@ -32,6 +32,8 @@ export const useTaskStore = defineStore('taskStore', {
     },
     removeTask (id: string){
       this.tasks = this.tasks.filter(task => task.id !== id);
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+
     },
     updateTask(id: string, updatedTask: Omit<Task, 'id'>) {
       const index = this.tasks.findIndex(task => task.id === id);

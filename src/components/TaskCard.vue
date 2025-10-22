@@ -8,9 +8,17 @@
         {{ props.description }}
     </div>
     <MyInput v-else v-model="editDescription" :dataType="'text'" :placeholder="'Описание задачи'"/>
-    <button class="delete__btn" @click="deleteTask" title="Удалить задачу">×</button>
-    <button v-if="!isEditing" class="edit__btn" @click="startEdit" title="Редактировать задачу">✎</button>
-    <button v-else class="save__btn" @click="saveEdit" title="Сохранить изменения">✓</button>
+    <div class="editing__card" @mouseover="eventMenu" @mouseleave="eventRemoveMenu">
+      <div v-if="!isMenu">
+        <button class="menu__btn btn btn-circle">⋮</button>
+      </div>
+      <div v-else>
+        <button class="delete__btn btn btn-circle btn-red" @click="deleteTask" title="Удалить задачу">×</button>
+        <button v-if="!isEditing" class="edit__btn btn btn-circle btn-green" @click="startEdit" title="Редактировать задачу">✎</button>
+        <button v-else class="save__btn btn btn-circle btn-blue" @click="saveEdit" title="Сохранить изменения">✓</button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -26,7 +34,9 @@ const props = defineProps<Props>();
 
 const taskStore = useTaskStore();
 
-const isEditing = ref(false);
+const isMenu = ref<boolean>(false);
+const isEditing = ref<boolean>(false); // Предполагаем, что это уже определено
+let hideMenuTimeout: number | null = null; // Таймер для задержки
 const editTitle = ref(props.title);
 const editDescription = ref(props.description);
 
@@ -44,38 +54,52 @@ const saveEdit = () => {
   taskStore.updateTask(props.id, { title: editTitle.value, description: editDescription.value });
   isEditing.value = false;
 };
+// Показать меню
+const eventMenu = () => {
+  if (hideMenuTimeout) {
+    clearTimeout(hideMenuTimeout); // Отменить скрытие, если курсор вернулся
+    hideMenuTimeout = null;
+  }
+  isMenu.value = true;
+};
 
+// Скрыть меню с задержкой
+const eventRemoveMenu = () => {
+  hideMenuTimeout = window.setTimeout(() => {
+    isMenu.value = false;
+  }, 300); // Задержка 300 мс — можно настроить
+};
 onMounted(() => console.log(props));
 </script>
 
 <style scoped>
 .task__card {
   position: relative;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   padding: 1.5rem;
   margin-bottom: 1rem;
-  font-family: 'Arial', sans-serif;
-  transition: box-shadow 0.2s ease;
+  font-family: var(--font-family);
+  transition: var(--transition-box-shadow);
   display: flex;
   flex-direction: column;
 }
 
 .task__card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--box-shadow-hover);
 }
 
 .title__field {
-  font-size: 1.2rem;
+  font-size: var(--font-size-large);
   font-weight: bold;
-  color: #333333;
+  color: var(--color-text-dark);
   margin-bottom: 0.5rem;
 }
 
 .data__field {
-  font-size: 1rem;
-  color: #666666;
+  font-size: var(--font-size-normal);
+  color: var(--color-text-gray);
   line-height: 1.4;
 }
 
@@ -83,83 +107,22 @@ onMounted(() => console.log(props));
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
-.delete__btn:hover {
-  background-color: #d32f2f;
-  transform: scale(1.1);
+.menu__btn{
+  background-color: transparent;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
-
-.delete__btn:active {
-  transform: scale(0.95);
-}
-
 .edit__btn {
   position: absolute;
   top: 10px;
   right: 50px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.edit__btn:hover {
-  background-color: #388e3c;
-  transform: scale(1.1);
-}
-
-.edit__btn:active {
-  transform: scale(0.95);
 }
 
 .save__btn {
   position: absolute;
   top: 10px;
   right: 50px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.save__btn:hover {
-  background-color: #1976d2;
-  transform: scale(1.1);
-}
-
-.save__btn:active {
-  transform: scale(0.95);
 }
 </style>

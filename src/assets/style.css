@@ -1,0 +1,125 @@
+/* Global variables for colors, fonts, and other common data */
+:root {
+  --color-white: #ffffff;
+  --color-text-dark: #333333;
+  --color-text-gray: #666666;
+  --color-border: #cccccc;
+  --color-red: #f44336;
+  --color-red-dark: #d32f2f;
+  --color-green: #4caf50;
+  --color-green-dark: #388e3c;
+  --color-blue: #2196f3;
+  --color-blue-dark: #1976d2;
+  --font-family: 'Arial', sans-serif;
+  --border-radius: 8px;
+  --border-radius-small: 4px;
+  --border-radius-circle: 50%;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --box-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --box-shadow-focus: 0 0 4px rgba(33, 150, 243, 0.3);
+  --transition-bg: background-color 0.2s ease;
+  --transition-transform: transform 0.1s ease;
+  --transition-border: border-color 0.2s ease;
+  --transition-box-shadow: box-shadow 0.2s ease;
+  --font-size-large: 1.2rem;
+  --font-size-normal: 1rem;
+  --font-size-btn: 18px;
+  --padding-input: 0.75rem;
+  --margin-input: 0.3rem;
+}
+
+/* Common utility classes */
+.card {
+  background-color: var(--color-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  font-family: var(--font-family);
+  transition: var(--transition-box-shadow);
+}
+
+.card:hover {
+  box-shadow: var(--box-shadow-hover);
+}
+
+.btn {
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: var(--transition-bg), var(--transition-transform);
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--border-radius-circle);
+  font-size: var(--font-size-btn);
+}
+
+.btn-red {
+  background-color: var(--color-red);
+  color: var(--color-white);
+}
+
+.btn-red:hover {
+  background-color: var(--color-red-dark);
+}
+
+.btn-green {
+  background-color: var(--color-green);
+  color: var(--color-white);
+}
+
+.btn-green:hover {
+  background-color: var(--color-green-dark);
+}
+
+.btn-blue {
+  background-color: var(--color-blue);
+  color: var(--color-white);
+}
+
+.btn-blue:hover {
+  background-color: var(--color-blue-dark);
+}
+
+.input {
+  padding: var(--padding-input);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  font-size: var(--font-size-normal);
+  transition: var(--transition-border), var(--transition-box-shadow);
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-blue);
+  box-shadow: var(--box-shadow-focus);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  font-family: var(--font-family);
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
