@@ -1,20 +1,34 @@
 <template>
-  <div class="task__form">
+  <form class="task__form" @submit.prevent="addTask">
     <div class="input__form">
-        <MyInput :model-value="task.title" @update:modelValue="$event => (task.title = $event)" :dataType="'text'" :placeholder="'Название задачи'"/>
-        <MyInput :model-value="task.description" @update:modelValue="$event => (task.description = $event)" :dataType="'text'" :placeholder="'Описание задачи'"/>
-     </div>
-    <div class="submit__btn">
-        <button class="btn btn-blue" @click="addTask">Поставить задачу</button>
+      <MyInput
+        :model-value="task.title"
+        @update:modelValue="$event => (task.title = $event)"
+        :dataType="'text'"
+        :placeholder="'Название задачи'"
+      />
+      <MyInput
+        :model-value="task.description"
+        @update:modelValue="$event => (task.description = $event)"
+        :dataType="'text'"
+        :placeholder="'Описание задачи'"
+      />
+      <MySelect v-model="task.category" :selectData="taskCategory" /> <!-- Используем v-model -->
+      <MySelect v-model="task.priority" :selectData="taskPriority" /> <!-- Аналогично -->
+      <MySelect v-model="task.status" :selectData="taskStatus" /> <!-- Аналогично -->
     </div>
-  </div>
+    <div class="submit__btn">
+      <button class="btn btn-blue" type="submit">Поставить задачу</button>
+    </div>
+  </form>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Task } from '@/types/task';
+import { ref, onMounted } from 'vue'; // Убрал computed, так как не используется
+import type { Task } from '@/types/task'; // Убрал taskCategory и т.д., если они не типы — определены локально
 import { useTaskStore } from '@/stores/taskStore';
 import MyInput from './UI/MyInput.vue';
+import MySelect from './UI/MySelect.vue';
 
 const taskStore = useTaskStore();
 
@@ -22,12 +36,25 @@ const taskStore = useTaskStore();
 const task = ref<Task>({
   title: '',
   description: '',
-  id: ''
+  id: '',
+  category: 'home',
+  priority: 'high',
+  status: 'todo'
 });
 
-const  addTask = () => {
+// Определяем массивы локально (если taskCategory — тип, замените на константы)
+const taskCategory: string[] = ["work", "home", "rest"];
+const taskPriority: string[] = ["high", "medium", "low"];
+const taskStatus: string[] = ["todo", "in-progress", "completed"];
+
+onMounted(() => {
+  console.log(taskCategory);
+});
+
+// Убрал categoryEmit, так как он не нужен
+const addTask = () => {
   // Проверяем, что все поля заполнены
-  if (!task.value.title || !task.value.description) {
+  if (!task.value.title.trim() || !task.value.description.trim()) {
     alert('Пожалуйста, заполните все поля');
     return;
   }
@@ -39,9 +66,12 @@ const  addTask = () => {
   task.value = {
     title: '',
     description: '',
-    id: ''
+    id: '',
+    category: 'home',
+    priority: 'high',
+    status: 'todo'
   };
-}
+};
 </script>
 
 <style scoped>
@@ -61,10 +91,6 @@ const  addTask = () => {
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1.5rem;
-}
-
-.input__form input {
-  @extend .input;
 }
 
 .submit__btn {

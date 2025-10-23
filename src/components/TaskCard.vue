@@ -28,7 +28,7 @@ import { onMounted, ref } from 'vue';
 import { useTaskStore } from '@/stores/taskStore';
 import MyInput from './UI/MyInput.vue';
 
-interface Props extends Pick<Task, 'title' | 'description' | 'id'>{
+interface Props extends Pick<Task, 'title' | 'description' | 'category'|'priority'|'status'>{
 };
 const props = defineProps<Props>();
 
