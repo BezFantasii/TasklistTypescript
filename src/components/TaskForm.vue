@@ -13,9 +13,8 @@
         :dataType="'text'"
         :placeholder="'Описание задачи'"
       />
-      <MySelect v-model="task.category" :selectData="taskCategory" /> <!-- Используем v-model -->
-      <MySelect v-model="task.priority" :selectData="taskPriority" /> <!-- Аналогично -->
-      <MySelect v-model="task.status" :selectData="taskStatus" /> <!-- Аналогично -->
+      <MySelect v-model="task.priority" :selectData="taskPriority" />
+      <MySelect v-model="task.status" :selectData="taskStatus" />
     </div>
     <div class="submit__btn">
       <button class="btn btn-blue" type="submit">Поставить задачу</button>
@@ -37,28 +36,24 @@ const task = ref<Task>({
   title: '',
   description: '',
   id: '',
-  category: 'home',
   priority: 'high',
   status: 'todo'
 });
 
-// Определяем массивы локально (если taskCategory — тип, замените на константы)
-const taskCategory: string[] = ["work", "home", "rest"];
 const taskPriority: string[] = ["high", "medium", "low"];
 const taskStatus: string[] = ["todo", "in-progress", "completed"];
 
-onMounted(() => {
-  console.log(taskCategory);
-});
+
 
 // Убрал categoryEmit, так как он не нужен
 const addTask = () => {
   // Проверяем, что все поля заполнены
-  if (!task.value.title.trim() || !task.value.description.trim()) {
+  if (!task.value.title.trim() || !task.value.description.trim()  || !task.value.priority || !task.value.status) {
     alert('Пожалуйста, заполните все поля');
     return;
   }
   task.value.id = Date.now().toString();
+  console.log(task.value.priority, task.value.status)
   // Добавляем задачу в store
   taskStore.addTask(task.value);
 
@@ -67,7 +62,6 @@ const addTask = () => {
     title: '',
     description: '',
     id: '',
-    category: 'home',
     priority: 'high',
     status: 'todo'
   };

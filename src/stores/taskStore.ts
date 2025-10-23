@@ -14,6 +14,7 @@ export const useTaskStore = defineStore('taskStore', {
   actions: {
     // Функция добавления задачи
     addTask(task: Task) {
+      console.log(task)
       this.tasks.push(task);
       // Сохраняем в localStorage после добавления
       this.saveTasks();

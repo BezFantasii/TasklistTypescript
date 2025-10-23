@@ -5,7 +5,20 @@ import TaskForm from '@/components/TaskForm.vue';
 
 <template>
   <main>
-    <task-list></task-list>
     <task-form></task-form>
+    <task-list></task-list>
   </main>
 </template>
+<style scoped>
+main{
+  display: flex;
+  justify-content: space-around;
+}
+@media (max-width: 800px) {
+  main{
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+</style>

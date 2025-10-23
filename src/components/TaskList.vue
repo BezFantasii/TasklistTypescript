@@ -1,7 +1,7 @@
 <template>
   <div class="task__list">
     <div v-for="task in tasks" :key="task.id">
-      <TaskCard :title="task.title" :description="task.description" :id="task.id"></TaskCard>
+      <TaskCard :title="task.title" :description="task.description" :id="task.id" :priority="task.priority" :status="task.status"></TaskCard>
     </div>
   </div>
 </template>

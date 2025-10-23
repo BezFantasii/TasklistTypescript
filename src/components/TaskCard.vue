@@ -1,13 +1,20 @@
 <template>
-  <div class="task__card">
+  <div class="task__card" :style="{ borderLeft: `5px solid ${statusColor}` }">
     <div v-if="!isEditing" class="title__field">
         {{ props.title }}
-    </div>
-    <MyInput v-else v-model="editTitle" :dataType="'text'" :placeholder="'Название задачи'" />
+    </div>  
+    <MyInput v-else v-model="card.editTitle" :dataType="'text'" :placeholder="'Название задачи'" />
     <div v-if="!isEditing" class="data__field">
         {{ props.description }}
     </div>
-    <MyInput v-else v-model="editDescription" :dataType="'text'" :placeholder="'Описание задачи'"/>
+    <MyInput v-else v-model="card.editDescription" :dataType="'text'" :placeholder="'Описание задачи'"/>
+    <div v-if="!isEditing" class="meta__field">
+        Приоритет: {{ props.priority }} | Статус: {{ props.status }}
+    </div>
+    <div v-else class="edit__meta">
+        <MySelect v-model="card.editPriority" :selectData="['high', 'medium', 'low']" />
+        <MySelect v-model="card.editStatus" :selectData="['todo', 'in-progress', 'completed']" />
+    </div>
     <div class="editing__card" @mouseover="eventMenu" @mouseleave="eventRemoveMenu">
       <div v-if="!isMenu">
         <button class="menu__btn btn btn-circle">⋮</button>
@@ -24,34 +31,54 @@
 
 <script setup lang="ts">
 import type { Task } from '@/types/task';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useTaskStore } from '@/stores/taskStore';
 import MyInput from './UI/MyInput.vue';
+import MySelect from './UI/MySelect.vue';
 
-interface Props extends Pick<Task, 'title' | 'description' | 'category'|'priority'|'status'>{
+interface Props extends Pick<Task, 'title' | 'description' | 'priority'|'status'|'id'>{
 };
 const props = defineProps<Props>();
+
+const statusColor = computed(() => {
+  switch (props.status) {
+    case 'todo':
+      return '#ccc'; // gray
+    case 'in-progress':
+      return '#ffc107'; // yellow
+    case 'completed':
+      return '#28a745'; // green
+    default:
+      return '#ccc';
+  }
+});
 
 const taskStore = useTaskStore();
 
 const isMenu = ref<boolean>(false);
-const isEditing = ref<boolean>(false); // Предполагаем, что это уже определено
-let hideMenuTimeout: number | null = null; // Таймер для задержки
-const editTitle = ref(props.title);
-const editDescription = ref(props.description);
+const isEditing = ref<boolean>(false);
+let hideMenuTimeout: number | null = null;
 
+const card = ref({
+  editTitle: props.title,
+  editDescription: props.description,
+  editPriority: props.priority,
+  editStatus: props.status
+});
 const deleteTask = () => {
   taskStore.removeTask(props.id);
 };
 
 const startEdit = () => {
   isEditing.value = true;
-  editTitle.value = props.title;
-  editDescription.value = props.description;
+  card.value.editTitle = props.title;
+  card.value.editDescription = props.description;
+  card.value.editPriority = props.priority;
+  card.value.editStatus = props.status;
 };
 
 const saveEdit = () => {
-  taskStore.updateTask(props.id, { title: editTitle.value, description: editDescription.value });
+  taskStore.updateTask(props.id, { title: card.value.editTitle, description: card.value.editDescription, priority: card.value.editPriority, status: card.value.editStatus });
   isEditing.value = false;
 };
 // Показать меню
@@ -69,6 +96,9 @@ const eventRemoveMenu = () => {
     isMenu.value = false;
   }, 300); // Задержка 300 мс — можно настроить
 };
+// const changeColor = () =>{
+//   if (props.status)
+// }
 onMounted(() => console.log(props));
 </script>
 
@@ -84,6 +114,7 @@ onMounted(() => console.log(props));
   transition: var(--transition-box-shadow);
   display: flex;
   flex-direction: column;
+  border-left: 5px solid #ccc; /* default gray */
 }
 
 .task__card:hover {
@@ -101,6 +132,18 @@ onMounted(() => console.log(props));
   font-size: var(--font-size-normal);
   color: var(--color-text-gray);
   line-height: 1.4;
+}
+
+.meta__field {
+  font-size: var(--font-size-small);
+  color: var(--color-text-gray);
+  margin-top: 0.5rem;
+}
+
+.edit__meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .delete__btn {
