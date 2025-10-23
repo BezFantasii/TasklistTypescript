@@ -1,6 +1,6 @@
 <template>
-  <select :value="modelValue" @change="updateValue"> <!-- Заменил v-model на :value и @change -->
-    <option v-for="category in selectData" :key="category" :value="category">{{ category }}</option>
+  <select :value="modelValue" > <!-- Заменил v-model на :value и @change -->
+    <option v-for="category in selectData" :key="category" :value="category" @click="u">{{ category }}</option>
   </select>
 </template>
 
